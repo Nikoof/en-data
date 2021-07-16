@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from typing import Dict
 from functools import cache
 
+YEAR = 2019
+
 @cache
 def get_county_code_map() -> Dict[str, str]:
     html = requests.get("https://www.teoalida.ro/lista-judete/").text
@@ -53,12 +55,10 @@ def get_county_data(county_code: str, year: int) -> pd.DataFrame:
 if __name__ == "__main__":
     county_code_map = get_county_code_map()
     
-    YEAR = 2019
-
     dataframes = []
     for i, county_code in enumerate(county_code_map.keys()):
         dataframes.append(get_county_data(county_code, YEAR))
-        time.sleep(5) # because of course they have a spam prevention mechanism bruh
+        time.sleep(5) # To prevent getting timed-out by spam prevention (?)
 
     data = pd.concat(dataframes)
     data = data.reset_index()
